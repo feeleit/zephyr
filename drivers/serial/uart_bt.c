@@ -194,7 +194,13 @@ static void uart_bt_poll_out(const struct device *dev, unsigned char c)
 	/** Right now we're discarding data if ring-buf is full. */
 	while (!ring_buf_put(ringbuf, &c, 1)) {
 		if (k_is_in_isr() || !atomic_get(&dev_data->bt.enabled)) {
-			LOG_WRN_ONCE("Ring buffer full, discard %c", c);
+			do {
+				static uint8_t __warned;
+				if (unlikely(__warned == 0)) {
+					__warned = 1;
+					LOG_WRN("Ring buffer full, discard %c", c);
+				}
+			} while (0);
 			break;
 		}
 
