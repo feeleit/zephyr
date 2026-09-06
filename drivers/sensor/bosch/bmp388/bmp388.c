@@ -491,9 +491,16 @@ static int bmp388_init(const struct device *dev)
 		return -EIO;
 	}
 
-	if (val != bmp3xx->chip_id) {
+	/* BMP388 and BMP390 share a register map and calibration layout, so a
+	 * node declared as either compatible accepts both parts. Feele boards
+	 * populate whichever is available (V4: BMP390, V5/V6: BMP388). */
+	if (val != BMP388_ID && val != BMP390_ID) {
 		LOG_ERR("Unsupported chip detected (0x%x)!", val);
 		return -ENODEV;
+	}
+	if (val != bmp3xx->chip_id) {
+		LOG_INF("Chip id 0x%x differs from devicetree compatible, using it anyway", val);
+		bmp3xx->chip_id = val;
 	}
 
 	/* Read calibration data */
