@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 #define FCB_CRC_SZ	sizeof(uint8_t)
-#define FCB_TMP_BUF_SZ	32
+#define FCB_TMP_BUF_SZ	512
 
 #define FCB_ID_GT(a, b) (((int16_t)(a) - (int16_t)(b)) > 0)
 
